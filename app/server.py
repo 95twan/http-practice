@@ -19,6 +19,8 @@ with socket(AF_INET, SOCK_STREAM) as server_socket:
 
     connection_socket, address = server_socket.accept()
     with connection_socket:
-        received_data = connection_socket.recv(1024)
-        print(received_data.decode('utf-8'))
+        request_data = connection_socket.recv(1024)
+        decoded_data = request_data.decode('utf-8')
+
+        print(decoded_data, end='')
 
