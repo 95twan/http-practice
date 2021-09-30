@@ -1,4 +1,6 @@
 from socket import *
+from parse_http_message import parse
+
 
 # socket(주소 체계(패밀리), 소켓 유형)
 # AF_INET = IPv4 의미
@@ -21,6 +23,5 @@ with socket(AF_INET, SOCK_STREAM) as server_socket:
     with connection_socket:
         request_data = connection_socket.recv(1024)
         decoded_data = request_data.decode('utf-8')
-
-        print(decoded_data, end='')
-
+        print(decoded_data)
+        print(parse(decoded_data))
