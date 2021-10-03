@@ -6,13 +6,14 @@ with socket(AF_INET, SOCK_STREAM) as client_socket:
 
     client_socket.connect((HOST, PORT))
 
-    http_message = "GET /apples;color=red/2021/user?name=twan&age=10#test HTTP/1.1\r\n\r\ndsfsfasdfad"
+    http_message = "GET /index.html HTTP/1.1\r\n\r\n"
 
     encoded_msg = http_message.encode('utf-8')
 
-    total_sent = 0
+    total_send = 0
 
-    while total_sent < len(encoded_msg):
-        sent_msg_len = client_socket.send(encoded_msg[total_sent:])
-        total_sent = total_sent + sent_msg_len
+    while total_send < len(encoded_msg):
+        send_msg_length = client_socket.send(encoded_msg[total_send:])
+        total_send = total_send + send_msg_length
 
+    print(client_socket.recv(1024))

@@ -25,7 +25,7 @@ def parse(data):
     http_request_message.set_initial_line(method, url, http_version)
     blank_line_index = data_split_by_line.index('')
     http_request_message.headers = parse_http_header(data_split_by_line[1:blank_line_index])
-    http_request_message.body = data_split_by_line[blank_line_index + 1] if blank_line_index + 1 == len(data_split_by_line) else ''
+    http_request_message.body = data_split_by_line[blank_line_index + 1] if blank_line_index + 1 == len(data_split_by_line) - 1 else ''
     return http_request_message
 
 
@@ -71,11 +71,9 @@ def parse_initial_line(data):
     split_data = data.split(' ')
     if len(split_data) != 3:
         raise Exception('잘못된 시작 줄입니다.')
-
     method = parse_http_method(split_data[0])
     url = parse_url(split_data[1])
     http_version = http_version_check(split_data[2])
-
     return method, url, http_version
 
 
@@ -114,9 +112,9 @@ def http_version_check(data):
 def parse_http_header(datas):
     headers = {}
     for data in datas:
-        header = data.split(':')
+        header = data.split(':', 1)
         if len(header) != 2:
-            raise Exception('잘못 헤더 입니다.')
+            raise Exception('잘못된 헤더 입니다.')
         headers[header[0]] = header[1]
 
     return headers
