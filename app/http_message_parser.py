@@ -1,3 +1,6 @@
+from HttpRequestMessage import HttpRequestMessage
+from Url import Url
+import re
 # 첫번째 방법
 # \r\n으로 쪼개기
 # \n을 대응 할 수 없는 문제
@@ -11,6 +14,15 @@
 # decoded_data.split('\n')
 
 # 세번째 방법
+# 문자열을 문자로 쪼개서 검사하는 방법
+
+
+def parse(data):
+    http_request_message = HttpRequestMessage()
+    data_split_by_line = split_by_line(data)
+    method, url, http_version = validate_initial_line(data_split_by_line[0])
+    http_request_message.set_initial_line(method, url, http_version)
+    return data_split_by_line
 
 
 def split_by_line(data):
@@ -51,9 +63,40 @@ def split_by_line(data):
     return split_by_line_data
 
 
-def parse(data):
-    data_split_by_line = split_by_line(data)
-    return data_split_by_line
+def validate_initial_line(data):
+    split_data = data.split(' ')
+    if len(split_data) != 3:
+        raise Exception('잘못된 시작 줄입니다.')
+
+    method = http_method_check(split_data[0])
+    url = url_parsing(split_data[1])
+    http_version = http_protocol_check(split_data[2])
+
+    return method, url, http_version
+
+
+def http_method_check(method):
+    if not method.isupper():
+        raise Exception('http 메소드가 대문자가 아닙니다.')
+
+    methods = ['GET', 'POST', 'HEAD', 'DELETE', 'PUT', 'PATCH', 'OPTIONS', 'CONNECT', 'TRACE']
+
+    try:
+        methods.index(method)
+    except ValueError:
+        raise Exception('정의 되지 않은 메소드 입니다.')
+
+    return method
+
+
+def url_parsing(data):
+    url = Url()
+    return url
+
+
+def http_protocol_check(data):
+    http_version = 'HTTP/1.1'
+    return http_version
 
 
 if __name__ == "__main__":

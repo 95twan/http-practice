@@ -1,5 +1,5 @@
 from socket import *
-from parse_http_message import parse
+from http_message_parser import parse
 
 
 # socket(주소 체계(패밀리), 소켓 유형)
@@ -21,7 +21,26 @@ with socket(AF_INET, SOCK_STREAM) as server_socket:
 
     connection_socket, address = server_socket.accept()
     with connection_socket:
+        # chunks = []
+        # try:
+        #     while True:
+        #         chunk = connection_socket.recv(1024)
+        #         print(chunk)
+        #         if not chunk:
+        #             break
+        #         chunks.append(chunk)
+        # except Exception as e:
+        #     print(e)
+
         request_data = connection_socket.recv(1024)
         decoded_data = request_data.decode('utf-8')
+        print(request_data)
         print(decoded_data)
-        print(parse(decoded_data))
+
+        result = None
+        try:
+            result = parse(decoded_data)
+        except Exception as e:
+            print(e)
+        finally:
+            print(result)
