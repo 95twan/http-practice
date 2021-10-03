@@ -1,5 +1,5 @@
-from HttpRequestMessage import HttpRequestMessage
-from Url import Url
+from http_request_message import HttpRequestMessage
+from url import Url
 import re
 from urllib.parse import urlparse
 # 첫번째 방법

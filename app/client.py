@@ -16,4 +16,4 @@ with socket(AF_INET, SOCK_STREAM) as client_socket:
         send_msg_length = client_socket.send(encoded_msg[total_send:])
         total_send = total_send + send_msg_length
 
-    print(client_socket.recv(1024))
+    print(client_socket.recv(1024).decode('utf-8'))

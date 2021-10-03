@@ -1,4 +1,4 @@
-from Url import Url
+from url import Url
 
 
 class HttpRequestMessage:

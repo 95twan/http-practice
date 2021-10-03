@@ -1,5 +1,14 @@
 from socket import *
 from http_message_parser import parse
+from http_response_message import HttpResponseMessage
+
+
+def send_message(socket, message):
+    total_send = 0
+
+    while total_send < len(message):
+        send_msg_length = socket.send(message[total_send:])
+        total_send = total_send + send_msg_length
 
 
 # socket(주소 체계(패밀리), 소켓 유형)
@@ -34,13 +43,40 @@ with socket(AF_INET, SOCK_STREAM) as server_socket:
 
         request_data = connection_socket.recv(1024)
         decoded_data = request_data.decode('utf-8')
-        print(request_data)
-        print(decoded_data)
 
-        result = None
         try:
-            result = parse(decoded_data)
+            http_request_message = parse(decoded_data)
+            if http_request_message.method == 'GET':
+                http_response_message = None
+                try:
+                    f = open('.' + http_request_message.url.path, 'r')
+                    data = []
+                    while True:
+                        line = f.readline()
+                        if not line:
+                            break
+                        data.append(line)
+                    body = ''.join(data)
+                    encoded_body = body.encode('utf-8')
+                    status_code = '200'
+                    status_msg = 'Ok'
+                    headers = {'Content-Type': 'text/html;charset=utf-8', 'Content-Length': str(len(encoded_body))}
+                    http_response_message = HttpResponseMessage('HTTP/1.1', status_code, status_msg)
+                    http_response_message.set_headers(headers)
+                    http_response_message.set_body(encoded_body)
+                except FileNotFoundError:
+                    status_code = '404'
+                    status_msg = 'Not Found'
+                    http_response_message = HttpResponseMessage('HTTP/1.1', status_code, status_msg)
+                except Exception:
+                    status_code = '500'
+                    status_msg = 'Internal Server Error'
+                    http_response_message = HttpResponseMessage('HTTP/1.1', status_code, status_msg)
+                finally:
+                    message = http_response_message.make_message()
+                    print(message)
+                    send_message(connection_socket, message)
         except Exception as e:
-            print(e)
-        finally:
-            print(result)
+            send_message(connection_socket, '유효하지 않은 HTTP메세지 스펙입니다.'.encode('utf-8'))
+
+
