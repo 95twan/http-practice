@@ -70,7 +70,7 @@ def validate_initial_line(data):
 
     method = http_method_check(split_data[0])
     url = url_parsing(split_data[1])
-    http_version = http_protocol_check(split_data[2])
+    http_version = http_version_check(split_data[2])
 
     return method, url, http_version
 
@@ -89,14 +89,20 @@ def http_method_check(method):
     return method
 
 
+# "*" | absoluteURI | abs_path | authority
+# 일단 abs_path 만
+# http://example.com/apples;color=red/2021/user?name=twan&age=10
 def url_parsing(data):
     url = Url()
     return url
 
 
-def http_protocol_check(data):
-    http_version = 'HTTP/1.1'
-    return http_version
+def http_version_check(data):
+    pattern = re.compile('HTTP/[0-9]+[.][0-9]+')
+    if not pattern.fullmatch(data):
+        raise Exception('HTTP 버전이 잘못되었습니다.')
+
+    return data
 
 
 if __name__ == "__main__":
