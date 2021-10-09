@@ -6,7 +6,7 @@ with socket(AF_INET, SOCK_STREAM) as client_socket:
 
     client_socket.connect((HOST, PORT))
 
-    http_message = "GET /index.html HTTP/1.1\r\n\r\n"
+    http_message = "GET /index.htmld HTTP/1.1\r\n\r\n"
 
     encoded_msg = http_message.encode('utf-8')
 

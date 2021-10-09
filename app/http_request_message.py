@@ -15,6 +15,9 @@ class HttpRequestMessage:
     def get_url(self):
         return self.__url
 
+    def get_body(self):
+        return self.__body
+
     def set_initial_line(self, method, url, http_version):
         self.__method = method
         self.__url = url

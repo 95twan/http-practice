@@ -1,4 +1,5 @@
 from http_response_message import HttpResponseMessage
+from http_error import HttpError
 
 
 class Controller:
@@ -11,12 +12,12 @@ class Controller:
         self.__method = method
 
     def control(self):
-        if self.__path.startswith('/index.html'):
+        if self.__path == '/index.html':
             return self.return_index_html()
         else:
             status_code = '400'
             status_msg = 'Bad Request'
-            return HttpResponseMessage('HTTP/1.1', status_code, status_msg)
+            raise HttpError('', status_code, status_msg)
 
     def return_index_html(self):
         headers = {}
@@ -38,12 +39,15 @@ class Controller:
             except FileNotFoundError:
                 status_code = '404'
                 status_msg = 'Not Found'
+                raise HttpError('', status_code, status_msg)
             except Exception:
                 status_code = '500'
                 status_msg = 'Internal Server Error'
+                raise HttpError('', status_code, status_msg)
         else:
             status_code = '405'
             status_msg = 'Method Not Allowed'
+            raise HttpError('', status_code, status_msg)
 
         http_response_message = HttpResponseMessage('HTTP/1.1', status_code, status_msg)
         http_response_message.set_headers(headers)

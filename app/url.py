@@ -11,6 +11,15 @@ class Url:
     def get_path(self):
         return self.__path
 
+    def get_matrix_parameter(self):
+        return self.__matrix_parameter
+
+    def get_query_parameter(self):
+        return self.__query_parameter
+
+    def get_fragment(self):
+        return self.__fragment
+
     # matrix parameter가 제대로 파싱되지 않는다.
     def set_url(self, parse_result):
         self.__scheme = parse_result.scheme

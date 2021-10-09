@@ -1,8 +1,11 @@
+import socket
 from socket import *
 from http_request_message_parser import parse
 from http_response_message import HttpResponseMessage
 from router import route
 from http_error import HttpError
+
+
 # socket(주소 체계(패밀리), 소켓 유형)
 # AF_INET = IPv4 의미
 # SOCK_STREAM : 연결 지향형 소켓
@@ -22,6 +25,8 @@ class ServerSocket:
         self.__server_socket.bind((host, port))
         self.__client_socket = None
         self.__address = None
+        self.__host = host
+        self.__port = str(port)
 
     def run(self):
         self.__server_socket.listen()
@@ -39,11 +44,12 @@ class ServerSocket:
             # except Exception as e:
             #     print(e)
             request_data = self.__client_socket.recv(1024)
+            decoded_data = request_data.decode('utf-8')
             try:
-                decoded_data = request_data.decode('utf-8')
                 http_request_message = parse(decoded_data)
             except Exception as e:
-                self.send_message(self.__client_socket, '유효하지 않은 HTTP메세지 스펙입니다.'.encode('utf-8'))
+                error_msg = decoded_data + '-> 이 문자열은 HTTP 메세지 형식이 아니므로 유효하지 않은 HTTP메세지 스펙입니다.'
+                self.send_message(self.__client_socket, error_msg.encode('utf-8'))
                 return
 
             try:
@@ -53,8 +59,10 @@ class ServerSocket:
                 print(http_response_message.make_message())
             except HttpError as http_error:
                 http_response_message = HttpResponseMessage('HTTP/1.1', http_error.status_code, http_error.status_msg)
+                http_response_message.set_body(self.error_msg_body(http_request_message))
             except Exception:
                 http_response_message = HttpResponseMessage('HTTP/1.1', '500', 'Internal Server Error')
+                http_response_message.set_body(self.error_msg_body(http_request_message))
             finally:
                 self.send_message(self.__client_socket, http_response_message.make_message())
 
@@ -64,3 +72,12 @@ class ServerSocket:
             send_msg_length = client_socket.send(message[total_send:])
             total_send = total_send + send_msg_length
 
+    def error_msg_body(self, http_request_message):
+        body = f"method: {http_request_message.get_method()}\n" + \
+               f"host: {self.__host + ':' + self.__port}\n" + \
+               f"path: {http_request_message.get_url().get_path()}\n" + \
+               f"query_parameter: {http_request_message.get_url().get_query_parameter()}\n" + \
+               f"matrix_parameter: {http_request_message.get_url().get_matrix_parameter()}\n" + \
+               f"fragment: {http_request_message.get_url().get_fragment()}\n" + \
+               f"body: {http_request_message.get_body()}"
+        return body.encode('utf-8')
