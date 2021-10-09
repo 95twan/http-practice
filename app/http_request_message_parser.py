@@ -24,8 +24,8 @@ def parse(data):
     method, url, http_version = parse_initial_line(data_split_by_line[0])
     http_request_message.set_initial_line(method, url, http_version)
     blank_line_index = data_split_by_line.index('')
-    http_request_message.headers = parse_http_header(data_split_by_line[1:blank_line_index])
-    http_request_message.body = data_split_by_line[blank_line_index + 1] if blank_line_index + 1 == len(data_split_by_line) - 1 else ''
+    http_request_message.__headers = parse_http_header(data_split_by_line[1:blank_line_index])
+    http_request_message.__body = data_split_by_line[blank_line_index + 1] if blank_line_index + 1 == len(data_split_by_line) - 1 else ''
     return http_request_message
 
 
