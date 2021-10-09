@@ -1,5 +1,5 @@
-from controller import Controller
-from http_error import HttpError
+from controller.controller import Controller
+from error.http_error import HttpError
 
 
 def route(path):

@@ -1,5 +1,5 @@
-from http_response_message import HttpResponseMessage
-from http_error import HttpError
+from http_response import HttpResponse
+from error.http_error import HttpError
 
 
 class Controller:
@@ -25,7 +25,7 @@ class Controller:
         if self.__method == 'GET':
             try:
                 # 주소 수정해야함
-                f = open('.' + self.__path, 'r')
+                f = open('./template' + self.__path, 'r')
                 data = []
                 while True:
                     line = f.readline()
@@ -49,9 +49,9 @@ class Controller:
             status_msg = 'Method Not Allowed'
             raise HttpError('', status_code, status_msg)
 
-        http_response_message = HttpResponseMessage('HTTP/1.1', status_code, status_msg)
-        http_response_message.set_headers(headers)
-        http_response_message.set_body(body)
-        return http_response_message
+        http_response = HttpResponse('HTTP/1.1', status_code, status_msg)
+        http_response.set_headers(headers)
+        http_response.set_body(body)
+        return http_response
 
 

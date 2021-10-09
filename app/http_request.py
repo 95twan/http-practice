@@ -1,7 +1,7 @@
 from url import Url
 
 
-class HttpRequestMessage:
+class HttpRequest:
     def __init__(self):
         self.__method = ''
         self.__url = Url()
@@ -27,6 +27,8 @@ class HttpRequestMessage:
         temp = ''
         for key, value in self.__headers.items():
             temp = temp + key + ': ' + value + '\n'
-        return self.__method + '\n' + self.__url.__str__() + '\n' + self.__http_version + '\n' + temp + '\n' + self.__body
-
-
+        return self.__method + '\n' + \
+               self.__url.__str__() + '\n' + \
+               self.__http_version + '\n' + \
+               temp + '\n' + \
+               self.__body

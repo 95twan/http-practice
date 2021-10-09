@@ -1,4 +1,4 @@
-from http_request_message import HttpRequestMessage
+from http_request import HttpRequest
 from url import Url
 import re
 from urllib.parse import urlparse
@@ -19,7 +19,7 @@ from urllib.parse import urlparse
 
 
 def parse(data):
-    http_request_message = HttpRequestMessage()
+    http_request_message = HttpRequest()
     data_split_by_line = split_by_line(data)
     method, url, http_version = parse_initial_line(data_split_by_line[0])
     http_request_message.set_initial_line(method, url, http_version)

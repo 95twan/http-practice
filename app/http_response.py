@@ -1,4 +1,4 @@
-class HttpResponseMessage:
+class HttpResponse:
     def __init__(self, http_version, status_code, status_msg):
         self.__http_version = http_version
         self.__status_code = status_code
@@ -30,3 +30,14 @@ class HttpResponseMessage:
             encoded_msg = encoded_msg + self.__body
 
         return encoded_msg
+
+    def make_error_message(self, host, port, http_request):
+        body = f"method: {http_request.get_method()}\n" + \
+               f"host: {host + ':' + port}\n" + \
+               f"path: {http_request.get_url().get_path()}\n" + \
+               f"query_parameter: {http_request.get_url().get_query_parameter()}\n" + \
+               f"matrix_parameter: {http_request.get_url().get_matrix_parameter()}\n" + \
+               f"fragment: {http_request.get_url().get_fragment()}\n" + \
+               f"body: {http_request.get_body()}"
+        self.__body = body.encode('utf-8')
+        return self.make_message()
